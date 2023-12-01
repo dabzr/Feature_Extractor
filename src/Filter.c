@@ -3,12 +3,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-struct Image filterAverage(struct Image* image, int factor) {
+struct pgm filterAverage(struct pgm* image, int factor) {
   if(!(factor % 2)){
     puts("É necessário que a matriz tenha tamanho ímpar.");
     exit(1);
   }
-  struct Image filtered_image = *image;
+  struct pgm filtered_image = *image;
   int sum_index, sum_data;
   int coeficient = factor / 2;
   unsigned char** matrix = NULL;

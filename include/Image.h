@@ -4,11 +4,12 @@
 #include <string.h>
 #include <stdlib.h>
 
-struct Image{
-  int w, h, channels;
-  unsigned char *data;
-  size_t size;
+struct pgm{
+	int w, h, pgmFormat, maxValue;
+	size_t size;
+	unsigned char *data;
 };
 
-struct Image readPGM(const char *filename);
-void savePGM(const char *filename, const struct Image *img);
+void readPGMImage(struct pgm *, char *);
+void viewPGMImage(struct pgm *);
+void writePGMImage(struct pgm *, char *);

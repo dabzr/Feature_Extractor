@@ -1,51 +1,86 @@
 #include "../include/Image.h"
-struct Image readPGM(const char *filename) {
-    struct Image img;
-    FILE *file;
-    char type[3];
-    int maxVal;
 
-    file = fopen(filename, "rb"); // Abre o arquivo PGM em modo de leitura binária
+void readPGMImage(struct pgm *img, char *filename){
 
-    if (file == NULL) {
-        fprintf(stderr, "Não foi possível abrir o arquivo.\n");
-        exit(1);
-    }
+	FILE *fp;
+	char ch;
 
-    fscanf(file, "%2s", type); // Lê o tipo de arquivo PGM
+	if (!(fp = fopen(filename,"r"))){
+		perror("Erro.");
+		exit(1);
+	}
 
-    if (strcmp(type, "P5") != 0) { // Verifica se o tipo de arquivo é P5 (PGM binário)
-        fprintf(stderr, "Formato de arquivo não suportado. Este não é um arquivo PGM do tipo P5.\n");
-        exit(1);
-    }
+	if ( (ch = getc(fp))!='P'){
+		puts("A imagem fornecida não está no formato pgm");
+		exit(2);
+	}
+	
+	img->pgmFormat = getc(fp)-48;
+	
+	fseek(fp,1, SEEK_CUR);
 
+	while((ch=getc(fp))=='#'){
+		while( (ch=getc(fp))!='\n');
+	}
 
-    fscanf(file, "%d %d\n%d\n", &img.w, &img.h, &maxVal);
+	fseek(fp,-1, SEEK_CUR);
 
-    img.channels = 1; // Para PGM, é uma imagem em tons de cinza (um canal)
+	fscanf(fp, "%d %d",&img->w,&img->h);
+	if (ferror(fp)){ 
+		perror(NULL);
+		exit(3);
+	}	
+	fscanf(fp, "%d",&img->maxValue);
+	fseek(fp,1, SEEK_CUR);
+  img->size = img->w * img->h;
+	img->data = (unsigned char*) malloc(img->size * sizeof(unsigned char));
 
-    img.size = img.w * img.h * img.channels;
-    img.data = (unsigned char *)malloc(img.size * sizeof(unsigned char));
+	switch(img->pgmFormat){
+		case 2:
+			puts("Lendo imagem PGM (dados em texto)");
+			for (int k=0; k < img->size; k++){
+				fscanf(fp, "%hhu", img->data+k);
+			}
+		break;	
+		case 5:
+			puts("Lendo imagem PGM (dados em binário)");
+			fread(img->data,sizeof(unsigned char),img->size, fp);
+		break;
+		default:
+			puts("Não está implementado");
+	}
+	
+	fclose(fp);
 
-    fread(img.data, sizeof(unsigned char), img.size, file); // Lê os dados dos pixels
-
-    fclose(file);
-    return img;
 }
 
-void savePGM(const char *filename, const struct Image *img) {
-    FILE *file = fopen(filename, "wb"); // Abre o arquivo PGM em modo de escrita binária
+void writePGMImage(struct pgm *img, char *filename){
+	FILE *fp;
+	char ch;
 
-    if (file == NULL) {
-        fprintf(stderr, "Não foi possível abrir o arquivo para escrita.\n");
-        exit(1);
-    }
+	if (!(fp = fopen(filename,"wb"))){
+		perror("Erro.");
+		exit(1);
+	}
 
-    // Escreve o cabeçalho do arquivo PGM
-    fprintf(file, "P5\n%d %d\n255\n", img->w, img->h);
+	fprintf(fp, "%s\n","P5");
+	fprintf(fp, "%d %d\n",img->w, img->h);
+	fprintf(fp, "%d\n", 255);
 
-    // Escreve os dados dos pixels
-    fwrite(img->data, sizeof(unsigned char), img->size, file);
+	fwrite(img->data, sizeof(unsigned char),img->size, fp);
+	fclose(fp);
 
-    fclose(file);
+}
+
+
+void viewPGMImage(struct pgm *img){
+	printf("Tipo: %d\n",img->pgmFormat);
+	printf("Dimensões: [%d %d]\n",img->w, img->h);
+	printf("Max: %d\n",img->maxValue);
+
+	for (int k=0; k < (img->size); k++){
+		if (!( k % img->w)) printf("\n");
+		printf("%2hhu ",*(img->data+k));
+	}
+	printf("\n");
 }

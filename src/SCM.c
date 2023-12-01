@@ -1,6 +1,6 @@
 #include "../include/SCM.h"
 
-unsigned char **CreateSCM(struct Image img, struct Image filtered_img, unsigned char level){
+unsigned char **CreateSCM(struct pgm img, struct pgm filtered_img, unsigned char level){
   unsigned char **matrix = (unsigned char **) malloc(sizeof(unsigned char *) * level);
   for (unsigned char i = 0; i < level; i++){
     matrix[i] = (unsigned char *) calloc(sizeof(unsigned char), level);

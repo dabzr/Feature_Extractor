@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-struct Image filterAverage(struct Image*, int);
+struct pgm filterAverage(struct pgm*, int);
 unsigned char matrixAverage(unsigned char**, int);
 unsigned char **createMatrix(int);
 void freeMatrix(unsigned char**, unsigned char*);
