@@ -18,8 +18,9 @@ int writeSCMtoCSV(FILE* csv, unsigned char** matrix, int matrixFactor, char * im
 
 int readDataset(const char* path, int matrixFactor, int quantizedValue){
     FILE *txt, *csv;
-    char fileName[30];
-    sprintf(fileName, "./csv/Image_%dx%d_%d", matrixFactor, matrixFactor, quantizedValue);
+    char fileName[30], imagePath[30];
+    struct pgm imagem;
+    sprintf(fileName, "./csv/Image_%dx%d_%d.csv", matrixFactor, matrixFactor, quantizedValue);
     csv = fopen(fileName, "w");
     txt = fopen("./csv/Imagens.txt", "w");
     DIR *d;
@@ -27,24 +28,24 @@ int readDataset(const char* path, int matrixFactor, int quantizedValue){
     d = opendir(path);
     if (!txt || !d || !csv) return EXIT_FAILURE;
 
-    for (int i = 0; i < matrixFactor * matrixFactor - 1; i++){
+    for (int i = 0; i < quantizedValue * quantizedValue; i++){
       fprintf(csv, "%d,", i);
     }
-    fprintf(csv, "%d", matrixFactor * matrixFactor - 1);
+    fprintf(csv, "%d", quantizedValue * quantizedValue);
     fprintf(csv, "\n");
 
     while ((dir = readdir(d)) != NULL) {
       if (dir->d_name[0] == '.') continue;
       fprintf(txt, "%s\n", dir->d_name);
-      struct pgm imagem;
-      char imagePath[30];
-      sprintf(imagePath, "./dataset/%s", dir->d_name);
+      sprintf(imagePath, "%s/%s", path, dir->d_name);
       readPGMImage(&imagem, imagePath);
-      struct pgm filtrada = filterAverage(&imagem, matrixFactor);
-      sprintf(imagePath, "./filtered/%dx%d_%d_%s", matrixFactor, matrixFactor, quantizedValue, dir->d_name);
-      writePGMImage(&filtrada, imagePath);
+      struct pgm filtrada = filterAverage(imagem, matrixFactor);
+      // sprintf(imagePath, "./filtered/%dx%d_%d_%s", matrixFactor, matrixFactor, quantizedValue, dir->d_name);
+      // writePGMImage(&filtrada, imagePath);
       unsigned char** matriz = CreateSCM(imagem, filtrada, quantizedValue);
       writeSCMtoCSV(csv, matriz, quantizedValue, dir->d_name);
+      freeMatrix(matriz);
+      free(imagem.data);
     }
     closedir(d);
     fclose(txt);

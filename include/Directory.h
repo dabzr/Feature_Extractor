@@ -2,4 +2,5 @@
 #include "Image.h"
 
 
-int readDataset(const char*, int, int);
+void readDataset_multithread(const char* path, int matrixFactor, int quantizedValue);
+int readDataset(const char* path, int matrixFactor, int quantizedValue);

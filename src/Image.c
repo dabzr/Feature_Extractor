@@ -37,13 +37,13 @@ void readPGMImage(struct pgm *img, char *filename){
 
 	switch(img->pgmFormat){
 		case 2:
-			puts("Lendo imagem PGM (dados em texto)");
+//			puts("Lendo imagem PGM (dados em texto)");
 			for (int k=0; k < img->size; k++){
 				fscanf(fp, "%hhu", img->data+k);
 			}
 		break;	
 		case 5:
-			puts("Lendo imagem PGM (dados em binário)");
+//			puts("Lendo imagem PGM (dados em binário)");
 			fread(img->data,sizeof(unsigned char),img->size, fp);
 		break;
 		default:
