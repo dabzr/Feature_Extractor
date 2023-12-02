@@ -11,7 +11,7 @@ int writeSCMtoCSV(FILE* csv, unsigned char** matrix, int matrixFactor, char * im
       fprintf(csv, "%d,", matrix[i][j]);
     }
   }
-  char *type = (imageName[strlen(imageName)-5] == '1')?"stroma":"epithelium";
+  char *type = (imageName[0] == '0')?"epithelium":"stroma";
   fprintf(csv, "%s\n", type);
   return EXIT_SUCCESS;
 }
@@ -37,11 +37,13 @@ int readDataset(const char* path, int matrixFactor, int quantizedValue){
       if (dir->d_name[0] == '.') continue;
       fprintf(txt, "%s\n", dir->d_name);
       struct pgm imagem;
-      readPGMImage(&imagem, "./dataset/lena.pgm");
+      char imagePath[30];
+      sprintf(imagePath, "./dataset/%s", dir->d_name);
+      readPGMImage(&imagem, imagePath);
       struct pgm filtrada = filterAverage(&imagem, matrixFactor);
-      writePGMImage(&filtrada, "./filtered/lena_filtered.pgm");
+      sprintf(imagePath, "./filtered/%dx%d_%d_%s", matrixFactor, matrixFactor, quantizedValue, dir->d_name);
+      writePGMImage(&filtrada, imagePath);
       unsigned char** matriz = CreateSCM(imagem, filtrada, quantizedValue);
-      printMatrix(matriz, quantizedValue);
       writeSCMtoCSV(csv, matriz, quantizedValue, dir->d_name);
     }
     closedir(d);
