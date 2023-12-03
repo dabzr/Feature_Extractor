@@ -10,14 +10,11 @@ int main() {
 
   begin = clock();
 
-  int quantized[2] = {8, 16};
   int matrixFactor[3] = {3, 5, 7};
-
-  for (int i = 0; i < 2; i++){
-    for (int j = 0; j < 3; j++){
-      readDataset("./datasets", matrixFactor[j], quantized[i]);
-    }  
-  }
+  
+  for (int i = 0; i < 3; i++){
+    readDataset("./datasets", matrixFactor[i]);
+  } 
 
   end = clock();
   

@@ -12,26 +12,24 @@ struct pgm filterAverage(struct pgm image, int factor) {
   struct pgm filtered_image = image;
   int sum_index, sum_data;
   int coeficient = factor / 2;
-  unsigned char** matrix = NULL;
-  matrix = createMatrix(factor);
+
 
   for (unsigned i = 0; i < image.size; i++) {
+      sum_data = 0;
       int posX = -coeficient;
       for (int x = 0; x < factor; x++) {
          int posY = (-image.w) * coeficient;
          for (int y = 0; y < factor; y++) {
-            sum_index = i + posY + posX;
-            if (!((sum_index) % image.w) || !((sum_index + 1) % image.w) || sum_index < 0 || sum_index > image.size) sum_data = 0;
-            else sum_data = image.data[sum_index];
-            matrix[y][x] = sum_data;
+            sum_index = i + posY + posX; 
+            if (((sum_index) % image.w) && ((sum_index + 1) % image.w) && sum_index >= 0 && sum_index <= image.size) 
+              sum_data += image.data[sum_index];
             posY += image.w;
          }
          posX++;
       }
-      filtered_image.data[i] = matrixAverage(matrix, factor, squared_factor);
+      filtered_image.data[i] = sum_data/squared_factor;
    }
 
-   freeMatrix(matrix);
    return filtered_image;
 }
 
