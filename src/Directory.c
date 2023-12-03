@@ -17,41 +17,40 @@ int writeSCMtoCSV(FILE* csv, unsigned char** matrix, int matrixFactor, char * im
 }
 
 int readDataset(const char* path, int matrixFactor){
-    FILE *txt, *csv8, *csv16;
-    char fileName8[300], fileName16[300], imagePath[300];
+    FILE *txt;
+    FILE *csvs[2];
+    char fileName[2][300], imagePath[300];
+    int values[2] = {8, 16};
     struct pgm imagem;
-    sprintf(fileName8, "./csv/Image_%dx%d_%d.csv", matrixFactor, matrixFactor, 8);
-    sprintf(fileName16, "./csv/Image_%dx%d_%d.csv", matrixFactor, matrixFactor, 16);
-    csv8 = fopen(fileName8, "w");
-    csv16 = fopen(fileName16, "w");
-    FILE *csvs[2] = {csv8, csv16};
+    for (int i = 0; i < 2; i++){
+      sprintf(fileName[i], "./csv/Image_%dx%d_%d.csv", matrixFactor, matrixFactor, values[i]);
+      csvs[i] = fopen(fileName[i], "w");
+    }
     txt = fopen("./csv/Imagens.txt", "w");
     DIR *d;
     struct dirent *dir;
     d = opendir(path);
-    if (!txt || !d || !csv8 || !csv16) {
+    if (!txt || !d || !csvs[0] || !csvs[1]) {
       perror("ERRO");
       if(txt) fclose(txt);
       if(d) closedir(d);
-      if(csv8) fclose(csv8);
-      if(csv16) fclose(csv16);
+      if(csvs[0]) fclose(csvs[0]);
+      if(csvs[1]) fclose(csvs[1]);
       exit(EXIT_FAILURE);
     };
 
-    int values[2] = {8, 16};
-
-    for(int i = 1; i <= 2; i++){
-      for(int j = 0; j < (values[i - 1] * values[i - 1]); j++){
-        fprintf(csvs[i - 1], "%d,", j);
+    for(int i = 0; i < 2; i++){
+      for(int j = 0; j < (values[i] * values[i]); j++){
+        fprintf(csvs[i], "%d,", j);
       }
-      fprintf(csvs[i - 1], "%d",(values[i - 1] * values[i - 1]));
-      fprintf(csvs[i - 1], "\n");
+      fprintf(csvs[i], "%d",(values[i] * values[i]));
+      fprintf(csvs[i], "\n");
     }
 
     unsigned char** matriz = NULL;
 
     while ((dir = readdir(d)) != NULL) {
-      if (dir->d_name[0] == '.') continue;
+      if (dir->d_type != DT_REG) continue;  // DT_REG é um macro para verificar se é um arquivo regular, e no código utilizei-o para caso não seja ele pule para proxima iteração
       fprintf(txt, "%s\n", dir->d_name);
       sprintf(imagePath, "%s/%s", path, dir->d_name);
       readPGMImage(&imagem, imagePath);
@@ -68,7 +67,7 @@ int readDataset(const char* path, int matrixFactor){
     }
     closedir(d);
     fclose(txt);
-    fclose(csv8);
-    fclose(csv16);
+    fclose(csvs[0]);
+    fclose(csvs[1]);
     return EXIT_SUCCESS;
 }
