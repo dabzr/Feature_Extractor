@@ -18,12 +18,13 @@ int writeSCMtoCSV(FILE* csv, unsigned char** matrix, int matrixFactor, char * im
 
 int readDataset(const char* path, int matrixFactor){
     FILE *txt, *csv8, *csv16;
-    char fileName8[30], fileName16[30], imagePath[30];
+    char fileName8[300], fileName16[300], imagePath[300];
     struct pgm imagem;
     sprintf(fileName8, "./csv/Image_%dx%d_%d.csv", matrixFactor, matrixFactor, 8);
     sprintf(fileName16, "./csv/Image_%dx%d_%d.csv", matrixFactor, matrixFactor, 16);
     csv8 = fopen(fileName8, "w");
     csv16 = fopen(fileName16, "w");
+    FILE *csvs[2] = {csv8, csv16};
     txt = fopen("./csv/Imagens.txt", "w");
     DIR *d;
     struct dirent *dir;
@@ -37,17 +38,17 @@ int readDataset(const char* path, int matrixFactor){
       exit(EXIT_FAILURE);
     };
 
-    for (int i = 0; i < 8 * 8; i++){
-      fprintf(csv8, "%d,", i);
-    }
-    fprintf(csv8, "%d", 8 * 8);
-    fprintf(csv8, "\n");
+    int values[2] = {8, 16};
 
-    for (int i = 0; i < 16 * 16; i++){
-      fprintf(csv16, "%d,", i);
+    for(int i = 1; i <= 2; i++){
+      for(int j = 0; j < (values[i - 1] * values[i - 1]); j++){
+        fprintf(csvs[i - 1], "%d,", j);
+      }
+      fprintf(csvs[i - 1], "%d",(values[i - 1] * values[i - 1]));
+      fprintf(csvs[i - 1], "\n");
     }
-    fprintf(csv16, "%d", 16 * 16);
-    fprintf(csv16, "\n");
+
+    unsigned char** matriz = NULL;
 
     while ((dir = readdir(d)) != NULL) {
       if (dir->d_name[0] == '.') continue;
@@ -57,13 +58,12 @@ int readDataset(const char* path, int matrixFactor){
       struct pgm filtrada = filterAverage(imagem, matrixFactor);
       sprintf(imagePath, "./filtered/%dx%d_%s", matrixFactor, matrixFactor, dir->d_name);
       writePGMImage(&filtrada, imagePath);
-      unsigned char** matriz8 = CreateSCM(imagem, filtrada, 8);
-      writeSCMtoCSV(csv8, matriz8, 8, dir->d_name);
-      unsigned char** matriz16 = CreateSCM(imagem, filtrada, 16); 
-      writeSCMtoCSV(csv16, matriz16, 16, dir->d_name);
-      
-      freeMatrix(matriz8);
-      freeMatrix(matriz16);
+      for(int i = 0; i < 2; i++){
+        matriz = CreateSCM(imagem, filtrada, values[i]);
+        writeSCMtoCSV(csvs[i], matriz, values[i], dir->d_name);
+      }
+
+      freeMatrix(matriz);
       free(imagem.data);
     }
     closedir(d);

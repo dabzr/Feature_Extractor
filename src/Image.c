@@ -3,14 +3,13 @@
 void readPGMImage(struct pgm *img, char *filename){
 
 	FILE *fp;
-	char ch;
 
 	if (!(fp = fopen(filename,"r"))){
 		perror("Erro.");
 		exit(1);
 	}
 
-	if ( (ch = getc(fp))!='P'){
+  if(getc(fp) !='P'){
 		puts("A imagem fornecida não está no formato pgm");
 		exit(2);
 	}
@@ -19,9 +18,9 @@ void readPGMImage(struct pgm *img, char *filename){
 	
 	fseek(fp,1, SEEK_CUR);
 
-	while((ch=getc(fp))=='#'){
-		while( (ch=getc(fp))!='\n');
-	}
+  while(getc(fp)=='#'){
+    while((getc(fp) != '\n'));
+  }
 
 	fseek(fp,-1, SEEK_CUR);
 
@@ -56,7 +55,6 @@ void readPGMImage(struct pgm *img, char *filename){
 
 void writePGMImage(struct pgm *img, char *filename){
 	FILE *fp;
-	char ch;
 
 	if (!(fp = fopen(filename,"wb"))){
 		perror("Erro.");

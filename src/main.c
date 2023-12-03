@@ -4,7 +4,6 @@
 #include "../include/Directory.h"
 #include <time.h>
 
-
 int main() {
   clock_t begin, end;
 

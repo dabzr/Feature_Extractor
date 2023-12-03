@@ -33,32 +33,7 @@ struct pgm filterAverage(struct pgm image, int factor) {
    return filtered_image;
 }
 
-
-unsigned char matrixAverage(unsigned char** matrix, int factor, int squared_factor) {
-   int sum = 0;
-   for (int i = 0; i < factor; i++) {
-      for (int j = 0; j < factor; j++) {
-         sum += matrix[i][j];
-      }
-   }
-   return sum / squared_factor;
-}
-
-unsigned char **createMatrix(int factor) {
-    unsigned char **matrix = (unsigned char **)malloc(sizeof(unsigned char *) * factor); 
-    unsigned char *data = (unsigned char *)malloc(sizeof(unsigned char) * factor * factor);
-    if (!matrix || !data) {
-        puts("Memória insuficiente!");
-        exit(1);
-    }
-    for (int i = 0; i < factor; i++) {
-        matrix[i] = &data[i * factor];
-    }
-
-    return matrix;
-}
-
 void freeMatrix(unsigned char **matrix) {
     free(matrix[0]);
-    free(matrix);    
+    free(matrix);
 }
