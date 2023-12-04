@@ -7,7 +7,7 @@
 
 int main(int argc, char *argv[]){
   if (argc != 3){
-    fprintf(stderr, "\n\t\t Formato: %s <N1-quantizaçao> <N2-quantizaçao>", argv[0]);
+    fprintf(stderr, "\n\t\t Formato: %s <N1-quantizaçao> <N2-quantizaçao>\n", argv[0]);
     exit(EXIT_FAILURE);
   }
   clock_t begin, end;
