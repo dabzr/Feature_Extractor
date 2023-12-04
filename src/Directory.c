@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int writeSCMtoCSV(FILE* csv, unsigned char** matrix, int matrixFactor, char * imageName){
+void writeSCMtoCSV(FILE* csv, unsigned char** matrix, int matrixFactor, char * imageName){
   for (int i = 0; i < matrixFactor; i++){
     for(int j = 0; j < matrixFactor; j++){
       fprintf(csv, "%d,", matrix[i][j]);
@@ -13,14 +13,12 @@ int writeSCMtoCSV(FILE* csv, unsigned char** matrix, int matrixFactor, char * im
   }
   char *type = (imageName[0] == '0')?"epithelium":"stroma";
   fprintf(csv, "%s\n", type);
-  return EXIT_SUCCESS;
 }
 
-int readDataset(const char* path, int matrixFactor){
+void readDataset(const char* path, int matrixFactor, int values[2]){
     FILE *txt;
     FILE *csvs[2];
     char fileName[2][300], imagePath[300];
-    int values[2] = {8, 16};
     struct pgm imagem;
     for (int i = 0; i < 2; i++){
       sprintf(fileName[i], "./csv/Image_%dx%d_%d.csv", matrixFactor, matrixFactor, values[i]);
@@ -69,5 +67,4 @@ int readDataset(const char* path, int matrixFactor){
     fclose(txt);
     fclose(csvs[0]);
     fclose(csvs[1]);
-    return EXIT_SUCCESS;
 }
