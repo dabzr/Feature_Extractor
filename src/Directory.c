@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define SAVE_FILTERED_IMAGE 0
+#define SAVE_FILTERED_IMAGE 1
 
 void writeSCMtoCSV(FILE* csv, unsigned char** matrix, int matrixFactor, char * imageName){
   for (int i = 0; i < matrixFactor; i++){

@@ -21,7 +21,7 @@ struct pgm filterAverage(struct pgm image, int factor) {
          int posY = (-image.w) * coeficient;
          for (int y = 0; y < factor; y++) {
             sum_index = i + posY + posX; 
-            if (((sum_index) % image.w) && ((sum_index + 1) % image.w) && sum_index >= 0 && sum_index <= image.size) 
+            if (sum_index >= 0 && sum_index <= image.size) 
               sum_data += image.data[sum_index];
             posY += image.w;
          }
