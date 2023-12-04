@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define SAVE_FILTERED_IMAGE 0
+
 void writeSCMtoCSV(FILE* csv, unsigned char** matrix, int matrixFactor, char * imageName){
   for (int i = 0; i < matrixFactor; i++){
     for(int j = 0; j < matrixFactor; j++){
@@ -53,8 +55,10 @@ void readDataset(const char* path, int matrixFactor, int values[2]){
       sprintf(imagePath, "%s/%s", path, dir->d_name);
       readPGMImage(&imagem, imagePath);
       struct pgm filtrada = filterAverage(imagem, matrixFactor);
+      #if SAVE_FILTERED_IMAGE > 0
       sprintf(imagePath, "./filtered/%dx%d_%s", matrixFactor, matrixFactor, dir->d_name);
       writePGMImage(&filtrada, imagePath);
+      #endif 
       for(int i = 0; i < 2; i++){
         matriz = CreateSCM(imagem, filtrada, values[i]);
         writeSCMtoCSV(csvs[i], matriz, values[i], dir->d_name);
