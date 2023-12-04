@@ -1,16 +1,16 @@
-all: imagefilter
+all: ./bin/imagefilter
 
-imagefilter: Directory.o Filter.o Image.o main.o SCM.o
+./bin/imagefilter: ./obj/Directory.o ./obj/Filter.o ./obj/Image.o ./obj/main.o ./obj/SCM.o
 	gcc ./obj/*.o -o ./bin/imagefilter -O3 -march=native -w
-Directory.o: ./src/Directory.c
+./obj/Directory.o: ./src/Directory.c
 	gcc -o ./obj/Directory.o -c ./src/Directory.c
-Filter.o: ./src/Filter.c
+./obj/Filter.o: ./src/Filter.c
 	gcc -o ./obj/Filter.o -c ./src/Filter.c
-Image.o: ./src/Image.c
+./obj/Image.o: ./src/Image.c
 	gcc -o ./obj/Image.o -c ./src/Image.c
-SCM.o: ./src/SCM.c
+./obj/SCM.o: ./src/SCM.c
 	gcc -o ./obj/SCM.o -c ./src/SCM.c
-main.o: ./src/main.c
+./obj/main.o: ./src/main.c
 	gcc -o ./obj/main.o -c ./src/main.c
 
 clean:
