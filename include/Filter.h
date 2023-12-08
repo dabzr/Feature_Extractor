@@ -4,6 +4,3 @@
 #include <stdlib.h>
 
 struct pgm filterAverage(struct pgm, int);
-unsigned char matrixAverage(unsigned char**, int , int);
-unsigned char **createMatrix(int);
-void freeMatrix(unsigned char**);

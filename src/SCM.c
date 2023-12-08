@@ -13,12 +13,7 @@ unsigned char **CreateSCM(struct pgm img, struct pgm filtered_img, unsigned char
   return matrix;
 }
 
-void printMatrix(unsigned char **matrix, unsigned char factor){
-  for (int i = 0; i < factor; i++){
-    printf("\n\t\t");
-    for (int j = 0; j < factor; j++){
-      printf("%d ", matrix[i][j]);
-    }
-  }
-  printf("\n");
+void freeMatrix(unsigned char **matrix) {
+    free(matrix[0]);
+    free(matrix);
 }

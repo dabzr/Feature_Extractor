@@ -1,5 +1,5 @@
 #include <dirent.h>
 #include "Image.h"
 
-void writeSCMtoCSV(FILE* csv, unsigned char** matrix, int matrixFactor, char * imageName);
-void readDataset(const char* path, int matrixFactor, int values[2]);
+void writeSCMtoCSV(FILE* csv, unsigned char** matrix, int matrixFactor, char * imageName); // Função que escreve a SCM em um arquivo CSV
+void readDataset(const char* path, int FilterFactor, int values[2]); // Função que lê o dataset e aplica filtro
