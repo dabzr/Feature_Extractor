@@ -1,17 +1,17 @@
 #include "../include/Image.h"
 
-void readPGMImage(struct pgm *img, char *filename){
+int readPGMImage(struct pgm *img, char *filename){
 
 	FILE *fp;
 
 	if (!(fp = fopen(filename,"r"))){
 		perror("Erro.");
-		exit(1);
+		return 0;
 	}
 
   if(getc(fp) !='P'){
 		puts("A imagem fornecida não está no formato pgm");
-		exit(2);
+		return 0;
 	}
 	
 	img->pgmFormat = getc(fp)-48;
@@ -27,8 +27,8 @@ void readPGMImage(struct pgm *img, char *filename){
 	fscanf(fp, "%d %d",&img->w,&img->h);
 	if (ferror(fp)){ 
 		perror(NULL);
-		exit(3);
-	}	
+		return 0;
+	}
 	fscanf(fp, "%d",&img->maxValue);
 	fseek(fp,1, SEEK_CUR);
   img->size = img->w * img->h;
@@ -50,15 +50,15 @@ void readPGMImage(struct pgm *img, char *filename){
 	}
 	
 	fclose(fp);
-
+  return 1;
 }
 
-void writePGMImage(struct pgm *img, char *filename){
+int writePGMImage(struct pgm *img, char *filename){
 	FILE *fp;
 
 	if (!(fp = fopen(filename,"wb"))){
 		perror("Erro.");
-		exit(1);
+		return 0;
 	}
 
 	fprintf(fp, "%s\n","P5");
@@ -67,7 +67,7 @@ void writePGMImage(struct pgm *img, char *filename){
 
 	fwrite(img->data, sizeof(unsigned char),img->size, fp);
 	fclose(fp);
-
+  return 1;
 }
 
 

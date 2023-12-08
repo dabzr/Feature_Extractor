@@ -54,11 +54,11 @@ void readDataset(const char* path, int filterFactor, int values[2]){
     /* DT_REG é um macro para verificar se é um arquivo regular, e no código utilizei-o para caso não seja ele pule para proxima iteração */
       fprintf(txt, "%s\n", dir->d_name);
       sprintf(imagePath, "%s/%s", path, dir->d_name); // Caminho para a imagem
-      readPGMImage(&imagem, imagePath); // Le a imagem que está no caminho escolhido
+      if(!readPGMImage(&imagem, imagePath)) continue; // Le a imagem que está no caminho escolhido
       struct pgm filtrada = filterAverage(imagem, filterFactor); // Filtra a imagem e salva em outra struct de pgm
       #if SAVE_FILTERED_IMAGE != 0 // Verificação se as imagens filtradas devem ser salvas ou não
-      sprintf(imagePath, "./filtered/%dx%d/%s", filterFactor, filterFactor, dir->d_name); // Cria o caminho do diretório da imagem filtrada baseada no seu filtro
-      writePGMImage(&filtrada, imagePath); // Salva a imagem filtrada
+        sprintf(imagePath, "./filtered/%dx%d/%s", filterFactor, filterFactor, dir->d_name); // Cria o caminho do diretório da imagem filtrada baseada no seu filtro
+        writePGMImage(&filtrada, imagePath); // Salva a imagem filtrada
       #endif 
       for(int i = 0; i < 2; i++){
         unsigned char** matriz = CreateSCM(imagem, filtrada, values[i]); // cria a SCM

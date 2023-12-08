@@ -10,6 +10,6 @@ struct pgm{
 	unsigned char *data;
 };
 
-void readPGMImage(struct pgm *, char *);
+int readPGMImage(struct pgm *, char *);
 void viewPGMImage(struct pgm *);
-void writePGMImage(struct pgm *, char *);
+int writePGMImage(struct pgm *, char *);
