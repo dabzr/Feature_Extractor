@@ -5,7 +5,7 @@ unsigned char **CreateSCM(struct pgm img, struct pgm filtered_img, unsigned char
   unsigned char *matrix_vector = (unsigned char *)calloc(sizeof(unsigned char), level * level); 
   /* Aloca um vetor no qual estarão os itens da matriz, todos zerados (calloc()) visto que cada item da matriz vai ser "incrementado" a cada mesma ocorrência dele*/
   for (int i = 0; i < level; i++) {
-    matrix[i] = &matrix_vector[i * level]; // Assinala o inicio de cada linha da matriz como sendo o matrix_vector[i * level] (level sendo o fator da SCM)
+    matrix[i] = &matrix_vector[i * level]; // Assinala o inicio de cada linha da matriz como sendo o endereço de matrix_vector[i * level] (level sendo o fator da SCM)
   }
 
   for (unsigned long i = 0; i < img.size; i++){
