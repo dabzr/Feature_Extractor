@@ -1,6 +1,8 @@
 # Feature_Extractor
 Programa que visa extrair características de imagens a partir de uma SCM.
 
+![image](https://github.com/RafaelAndradeDEV/Feature_Extractor/assets/128552152/2e148cd9-60e2-401c-9ba9-e0875f965891)
+
 ## Detalhes para a execução:
 ### Instalação:
 
