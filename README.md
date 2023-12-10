@@ -15,6 +15,10 @@ Implementação de um extrator de características de uma imagem, para posterior
 `make`
 ### Execução:
 
-  `./bin/imagefilter <N1-de-Quantização> <N2-de-Quantização> datasets` 
+  `./bin/imagefilter <N1-de-Quantização> <N2-de-Quantização> <Diretório-do-Dataset>`
+
+  Por padrão é executado como:
+
+  `./bin/imagefilter 8 16 datasets`
   
   ATENÇÃO, caso o programa não seja executado no diretório raiz do projeto (por padrão se chama Feature_Extractor), o programa não irá funcionar.
