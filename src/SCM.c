@@ -1,3 +1,12 @@
+/*
+
+  Equipe: Emannuel Levi, Henrique Fernandes, Levi Mena, Raimundo Rafael
+  Avaliação 04: Trabalho Final
+  04.505.23 - 2023.2 - Prof.Daniel Ferreira
+  Compilador: gcc (GCC) 13.2.1 20230801.
+
+*/
+
 #include "../include/SCM.h"
 
 unsigned char **CreateSCM(struct pgm img, struct pgm filtered_img, unsigned char level){
