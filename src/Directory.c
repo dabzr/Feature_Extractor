@@ -6,7 +6,6 @@
 #include <stdlib.h>
 
 #define SAVE_FILTERED_IMAGE 1 // Macro que define se as imagens filtrada serão ou não salvas  
-
 void writeSCMtoCSV(FILE* csv, unsigned char** matrix, int matrixFactor, char * imageName){
   for (int i = 0; i < matrixFactor; i++){
     for(int j = 0; j < matrixFactor; j++){
@@ -43,7 +42,7 @@ void readDataset(const char* path, int filterFactor, int values[2]){
 
     for(int i = 0; i < 2; i++){
       for(int j = 0; j < (values[i] * values[i]); j++){
-        fprintf(csvs[i], "%d,", j);
+        fprintf(csvs[i], "%d,", j); // Coloca o índice do CSV
       }
       fprintf(csvs[i], "%d",(values[i] * values[i]));
       fprintf(csvs[i], "\n");
