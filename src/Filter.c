@@ -25,17 +25,13 @@ struct pgm filterAverage(struct pgm image, int factor) {
 
   for (unsigned i = 0; i < image.size; i++) { // Ignora pixels que fugiriam dos limites da imagem em cima e embaixo
       sum_data = 0;
-
+      // O "X" da matriz varia de -coeficiente até coeficiente
       for (int x = -coeficient; x <= coeficient; x++) {
-
-         for (int y = -coeficient; y <= coeficient; y++) {    
-          int posY = i + y; // O "Y" também varia de -coeficiente até coeficiente porém para pular/voltar linha você utiliza o tamanho da linha (image.w)
-          int posX = i + x; // O "X" da matriz varia de -coeficiente até coeficiente
-          sum_index = i + (y * image.w) + x; // Atualiza o índice de acordo com a posição na matriz de filtro 
-          if((posY >= 0) && (posX >= 0)  && (posX <= image.w) && (posY <= image.h) && (sum_index >= 0)) // Ignora pixels que fugiriam dos limites da imagem na esquerda e na direita
-            sum_data += image.data[sum_index]; //Soma cada item da matriz de filtro
+         for (int y = -coeficient * (image.w); y <= coeficient * image.w; y+=image.w) {
+          sum_index = i + y + x; // Atualiza o índice de acordo com a posição na matriz de filtro 
+          if(((((i + coeficient) % image.w) - (coeficient + coeficient)) >= 0 ) && (sum_index >= 0)) // Ignora pixels que fugiriam dos limites da imagem na esquerda e na direita
+            sum_data += image.data[sum_index];//Soma cada item da matriz de filtro
          }
-
       }
       filtered_image.data[i] = sum_data/squared_factor; // Faz a média e substitui no pixel da imagem filtrada
     }
