@@ -75,7 +75,8 @@ void readDataset(const char* path, int filterFactor, int values[2]){
         writeSCMtoCSV(csvs[i], matriz, values[i], dir->d_name); // Escreve a matriz no arquivo CSV
         freeMatrix(matriz); // Libera a memoria alocada na matriz
       }
-      free(imagem.data); // Libera a memória alocada nos dados da imagem (Ver Image.c, lá os dados são alocados utilizando a função malloc())
+      free(imagem.data);
+      free(filtrada.data); // Libera a memória alocada nos dados da imagem (Ver Image.c, lá os dados são alocados utilizando a função malloc())
     }
     closedir(d); // Fecha diretório
     fclose(txt); // Fecha os arquivos abertos

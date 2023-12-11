@@ -19,6 +19,7 @@ struct pgm filterAverage(struct pgm image, int factor) {
   }
   int squared_factor = factor * factor;
   struct pgm filtered_image = image;
+  filtered_image.data = malloc(sizeof(unsigned char) * image.size);
   int sum_index, sum_data;
   int coeficient = factor / 2; // Coeficiente que representa quantos pixels cada pixel tem de um lado
 
