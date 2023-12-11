@@ -16,11 +16,19 @@ unsigned char **CreateSCM(struct pgm img, struct pgm filtered_img, unsigned char
   for (int i = 0; i < level; i++) {
     matrix[i] = &matrix_vector[i * level]; // Assinala o inicio de cada linha da matriz como sendo o endereço de matrix_vector[i * level] (level sendo o fator da SCM)
   }
-
+  
+  unsigned char * DataOGImg = malloc(sizeof(unsigned char) * img.size);
+  unsigned char * DataFilteredImg = malloc(sizeof(unsigned char) * filtered_img.size);
+  for (int i = 0; i < img.size; i++){
+    DataOGImg[i] = (unsigned char) ((img.data[i] / 256.0) * level);
+    DataFilteredImg[i] = (unsigned char) ((filtered_img.data[i] / 256.0) * level);
+  }
   for (unsigned long i = 0; i < img.size; i++){
-    matrix[(img.data[i])%level][(filtered_img.data[i])%level]++; 
+    matrix[DataOGImg[i]][DataFilteredImg[i]]++; 
     /*Quantiza os valores dos pixels da imagem original e da imagem filtrada e incrementa os "encontros"*/ 
   }
+  free(DataOGImg);
+  free(DataFilteredImg);
   return matrix;
 }
 
