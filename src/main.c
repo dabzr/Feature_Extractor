@@ -23,9 +23,10 @@ int main(int argc, char *argv[]){
   int matrixFactor[3] = {3, 5, 7};
   
   print_progress(0, 3);
+  printf("\t %d/%d", 0, 3);
   for (int i = 0; i < 3; i++){
     readDataset(argv[1], matrixFactor[i], values, qtd);
-    print_progress(i+1, 3);
+    printf("\t %d/%d", i+1, 3);
   } 
 
   end = clock();
