@@ -22,12 +22,32 @@ int main(int argc, char *argv[]){
   }
   int matrixFactor[3] = {3, 5, 7};
   
+  print_progress(0, 3);
   for (int i = 0; i < 3; i++){
     readDataset(argv[1], matrixFactor[i], values, qtd);
+    print_progress(i+1, 3);
   } 
 
   end = clock();
   
-  printf("\t\tTempo de Execução: %lf\n", (double) (end - begin) / CLOCKS_PER_SEC);
+  printf("\n\t\tTempo de Execução: %lf\n", (double) (end - begin) / CLOCKS_PER_SEC);
   return 0;
+}
+
+void print_progress(size_t count, size_t max) {
+    const int bar_width = 50;
+
+    float progress = (float) count / max;
+    int bar_length = progress * bar_width;
+
+    printf("\rProgresso: [");
+    for (int i = 0; i < bar_length; ++i) {
+        printf("#");
+    }
+    for (int i = bar_length; i < bar_width; ++i) {
+        printf(".");
+    }
+    printf("] %.2f%%", progress * 100);
+
+    fflush(stdout);
 }

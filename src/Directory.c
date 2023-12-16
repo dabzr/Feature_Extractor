@@ -31,7 +31,7 @@ void readDataset(const char* path, int filterFactor, int *values, int qtd){
     d = opendir(path);
     if (!txt || !d || !csvs[0] || !csvs[1]) {
       perror("ERRO"); 
-      if(txt) fclose(txt); // Fecha os outros arquivos que foram abertos
+      if(txt) fclose(txt);
       if(d) closedir(d);
       for (int i = 0; i < qtd; i++)
         if(csvs[i]) fclose(csvs[i]);
@@ -51,15 +51,15 @@ void readDataset(const char* path, int filterFactor, int *values, int qtd){
       fprintf(txt, "%s\n", dir->d_name);
       sprintf(imagePath, "%s/%s", path, dir->d_name);
       if(!readPGMImage(&imagem, imagePath)) continue;
-      struct pgm filtrada = filterAverage(imagem, filterFactor); // Filtra a imagem e salva em outra struct de pgm
-      #if SAVE_FILTERED_IMAGE != 0 // Verificação se as imagens filtradas devem ser salvas ou não
-        sprintf(imagePath, "./filtered/%dx%d/%s", filterFactor, filterFactor, dir->d_name); // Cria o caminho do diretório da imagem filtrada baseada no seu filtro
-        writePGMImage(&filtrada, imagePath); // Salva a imagem filtrada
+      struct pgm filtrada = filterAverage(imagem, filterFactor);
+      #if SAVE_FILTERED_IMAGE != 0 
+        sprintf(imagePath, "./filtered/%dx%d/%s", filterFactor, filterFactor, dir->d_name); 
+        writePGMImage(&filtrada, imagePath); 
       #endif 
       for(int i = 0; i < qtd; i++){
-        unsigned char** matriz = CreateSCM(imagem, filtrada, values[i]); // cria a SCM
-        writeSCMtoCSV(csvs[i], matriz, values[i], dir->d_name); // Escreve a matriz no arquivo CSV
-        freeMatrix(matriz); // Libera a memoria alocada na matriz
+        unsigned char** matriz = CreateSCM(imagem, filtrada, values[i]); 
+        writeSCMtoCSV(csvs[i], matriz, values[i], dir->d_name); 
+        freeMatrix(matriz);
       }
       free(imagem.data);
       free(filtrada.data); // Libera a memória alocada nos dados da imagem (Ver Image.c, lá os dados são alocados utilizando a função malloc())
