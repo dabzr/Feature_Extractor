@@ -14,7 +14,7 @@ void readDataset(const char *path, int filterFactor, int* values, int qtd, int q
   FILE* csvs[qtd];
   for (int i = 0; i < qtd; i++){
     csvs[i] = fileHandling(CSV, filterFactor, values[i]);
-    startCSV(csvs[i], filterFactor);
+    startCSV(csvs[i], values[i]);
   }
   int count = 0;
   DIR *d;
