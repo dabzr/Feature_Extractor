@@ -5,80 +5,109 @@
 #include <dirent.h>
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <errno.h>
 #define SAVE_FILTERED_IMAGE 1 
-void writeSCMtoCSV(FILE* csv, unsigned char** matrix, int matrixFactor, char * imageName){
-  for (int i = 0; i < matrixFactor; i++){
-    for(int j = 0; j < matrixFactor; j++){
-      fprintf(csv, "%d,", matrix[i][j]);
-    }
+#define MAX_BUFFER_SIZE 300
+
+void readDataset(const char *path, int filterFactor, int* values, int qtd, int qtd_imagens){
+
+  FILE* csvs[qtd];
+  for (int i = 0; i < qtd; i++){
+    csvs[i] = fileHandling(CSV, filterFactor, values[i]);
+    startCSV(csvs[i], filterFactor);
   }
-  char *type = (imageName[0] == '0')?"epithelium":"stroma";
-  fprintf(csv, "%s\n", type);
+  int count = 0;
+  DIR *d;
+  struct dirent *dir;
+  d = opendir(path);
+  if(!d){
+    perror("ERRO");
+    exit(errno);
+  }
+  while ((dir = readdir(d)) != NULL) {
+    if (dir->d_type != DT_REG) continue;
+    struct pgm imagem, filtrada;
+    if(!imageFiltering(&imagem, &filtrada, path, dir->d_name, filterFactor)) continue;
+    SCMHandling(imagem, filtrada, values, qtd, dir->d_name, csvs);
+    free(imagem.data);
+    free(filtrada.data); 
+    print_progress(++count, qtd_imagens);
+  }
+  closedir(d); 
+  for (int i = 0; i < qtd; i++)
+    fclose(csvs[i]);
+}
+void startCSV(FILE *csv, int matrixFactor){
+  for(int j = 0; j < (matrixFactor * matrixFactor); j++){
+    fprintf(csv, "%d,", j);
+  }
+  fprintf(csv, "%d",(matrixFactor * matrixFactor));
+  fprintf(csv, "\n");
+}
+FILE *fileHandling(enum FileType type, int filterFactor, int value){
+  char fileName[MAX_BUFFER_SIZE];
+  FILE *file;
+  switch (type){
+    case TXT:
+      file = fopen("./csv/Imagens.txt", "w");
+      fileErrorHandling(file);
+      break;
+    case CSV:
+      sprintf(fileName, "./csv/Image_%dx%d_%d.csv", filterFactor, filterFactor, value); 
+      file = fopen(fileName, "w");
+      fileErrorHandling(file);
+      break;
+  }
+  return file;
 }
 
-void readDataset(const char* path, int filterFactor, int *values, int qtd){
-    FILE *txt;
-    FILE *csvs[qtd];
-    char fileName[qtd][300], imagePath[300];
-    struct pgm imagem;
-    for (int i = 0; i < qtd; i++){
-      sprintf(fileName[i], "./csv/Image_%dx%d_%d.csv", filterFactor, filterFactor, values[i]); 
-      csvs[i] = fopen(fileName[i], "w");
-    }
-    txt = fopen("./csv/Imagens.txt", "w");
-    DIR *d;
-    struct dirent *dir;
-    d = opendir(path);
-    if (!txt || !d || !csvs[0] || !csvs[1]) {
-      perror("ERRO"); 
-      if(txt) fclose(txt);
-      if(d) closedir(d);
-      for (int i = 0; i < qtd; i++)
-        if(csvs[i]) fclose(csvs[i]);
-      exit(1);
-    };
 
-    for(int i = 0; i < qtd; i++){
-      for(int j = 0; j < (values[i] * values[i]); j++){
-        fprintf(csvs[i], "%d,", j);
-      }
-      fprintf(csvs[i], "%d",(values[i] * values[i]));
-      fprintf(csvs[i], "\n");
-    }
+void fileErrorHandling(FILE*fp){
+  if(!fp){
+    perror("ERRO");
+    exit(errno);
+  }
+}
 
-    int max = 0;
-    struct dirent *count_dir;
-    DIR *count_directory = opendir(path);
-    if(!count_directory) exit(1);
-    while((count_dir = readdir(count_directory)) != NULL) {
-      if(count_dir->d_type != DT_DIR) max++;
-    }
-    closedir(count_directory);
-    int count = 0;
+int imageFiltering(struct pgm* originalImage, struct pgm* filteredImage, const char* path, const char* fileName, int filterFactor){
+  char imagePath[MAX_BUFFER_SIZE];
+  sprintf(imagePath, "%s/%s", path, fileName);
+  if(!readPGMImage(originalImage, imagePath)) return 0;
+  *(filteredImage) = filterAverage(*originalImage, filterFactor);
+  #if SAVE_FILTERED_IMAGE != 0 
+    sprintf(imagePath, "./filtered/%dx%d/%s", filterFactor, filterFactor, fileName); 
+    writePGMImage(filteredImage, imagePath); 
+  #endif
+  return 1;
+} 
 
-    while ((dir = readdir(d)) != NULL) {
-      if (dir->d_type != DT_REG) continue;
-      fprintf(txt, "%s\n", dir->d_name);
-      sprintf(imagePath, "%s/%s", path, dir->d_name);
-      if(!readPGMImage(&imagem, imagePath)) continue;
-      struct pgm filtrada = filterAverage(imagem, filterFactor);
-      #if SAVE_FILTERED_IMAGE != 0 
-        sprintf(imagePath, "./filtered/%dx%d/%s", filterFactor, filterFactor, dir->d_name); 
-        writePGMImage(&filtrada, imagePath); 
-      #endif
-      count++;
-      print_progress(count, max);
-      for(int i = 0; i < qtd; i++){
-        unsigned char** matriz = CreateSCM(imagem, filtrada, values[i]); 
-        writeSCMtoCSV(csvs[i], matriz, values[i], dir->d_name); 
-        freeMatrix(matriz);
-      }
-      free(imagem.data);
-      free(filtrada.data); 
-    }
-    closedir(d); 
-    fclose(txt);
-    for (int i = 0; i < qtd; i++)
-      fclose(csvs[i]);
+void startDataset(const char *path, int*max){ 
+  FILE* txt = fileHandling(TXT, 0, 0);
+  DIR* d;
+  struct dirent *dir;
+  d = opendir(path);
+  *max = 0;
+  while ((dir = readdir(d)) != NULL) {  
+    if (dir->d_type != DT_REG) continue;
+    fprintf(txt, "%s\n", dir->d_name);
+    (*max)++;
+  }
+  fclose(txt);
+}
+
+
+
+void print_progress(size_t count, size_t max) {
+  const int bar_width = 50;
+  float progress = (float) count / max;
+  int bar_length = progress * bar_width;
+  printf("\rProgresso: [");
+  for (int i = 0; i < bar_length; ++i) {
+      printf("#");
+  }
+  for (int i = bar_length; i < bar_width; ++i) {
+      printf(".");
+  }
+  printf("] %.2f%%", progress * 100);
+  fflush(stdout);
 }

@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <time.h>
 
+#define FILTER_FACTOR_QUANTITY 3
+
 int main(int argc, char *argv[]){
   if (argc < 3){
     fprintf(stderr, "\n\t\t Formato: %s <Diretório-Do-Dataset> <N-de-Quantização> ... (podem ser quantos níveis de quantização você queira.)\n", argv[0]);
@@ -20,35 +22,18 @@ int main(int argc, char *argv[]){
   for (int i = 0; i < qtd; i++){
     values[i] = atoi(argv[i+2]);
   }
-  int matrixFactor[3] = {3, 5, 7};
-  
-  print_progress(0, 3);
-  printf("\t %d/%d", 0, 3);
-  for (int i = 0; i < 3; i++){
-    readDataset(argv[1], matrixFactor[i], values, qtd);
-    printf("\t %d/%d", i+1, 3);
+  int matrixFactor[FILTER_FACTOR_QUANTITY] = {3, 5, 7};
+  print_progress(0, 1);
+  printf("\t %d/%d", 0, FILTER_FACTOR_QUANTITY);
+  int pgm_quantity;
+  startDataset(argv[1], &pgm_quantity); 
+  for (int i = 0; i < FILTER_FACTOR_QUANTITY; i++){
+    readDataset(argv[1], matrixFactor[i], values, qtd, pgm_quantity);
+    printf("\t %d/%d", i+1, FILTER_FACTOR_QUANTITY);
   } 
 
   end = clock();
   
   printf("\n\t\tTempo de Execução: %lf\n", (double) (end - begin) / CLOCKS_PER_SEC);
   return 0;
-}
-
-void print_progress(size_t count, size_t max) {
-    const int bar_width = 50;
-
-    float progress = (float) count / max;
-    int bar_length = progress * bar_width;
-
-    printf("\rProgresso: [");
-    for (int i = 0; i < bar_length; ++i) {
-        printf("#");
-    }
-    for (int i = bar_length; i < bar_width; ++i) {
-        printf(".");
-    }
-    printf("] %.2f%%", progress * 100);
-
-    fflush(stdout);
 }
