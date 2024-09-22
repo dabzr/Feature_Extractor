@@ -7,7 +7,7 @@ Programa que visa extrair características de imagens a partir de uma SCM.
 ### Instalação:
 
 ```bash
-git clone https://github.com/RafaelAndradeDEV/Feature_Extractor.git
+git clone https://github.com/dabzr/Feature_Extractor.git
 cd Feature_Extractor
 mkdir filtered filtered/3x3 filtered/5x5 filtered/7x7 datasets
 # Coloque as imagens na pasta datasets
@@ -16,7 +16,7 @@ make
 ### Execução:
 
 ```bash
-  ./bin/imagefilter <N1-de-Quantização> <N2-de-Quantização> <Diretório-do-Dataset>
+./bin/imagefilter <N1-de-Quantização> <N2-de-Quantização> <Diretório-do-Dataset>
 ```
 
   Por padrão é executado como:
